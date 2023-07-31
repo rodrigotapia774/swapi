@@ -20,6 +20,7 @@ export default createStore({
     specie: {},
     loading: false,
     loadingResidents: false,
+    loadingPilots: false,
     loadingFilms: false,
     loadingPlanet: false,
     loadingVehicle: false,
@@ -42,6 +43,7 @@ export default createStore({
         datos.rows.push({
           id: id,
           name: item.name,
+          type: 'People',
           img: `https://starwars-visualguide.com/assets/img/characters/${id}.jpg`
         })
       })
@@ -61,6 +63,7 @@ export default createStore({
       state.planet = {}
       state.ships = []
       state.species = []
+      state.vehicle = []
       state.loadingFilms = true
       state.loadingVehicle = true
       state.loadingStarship = true
@@ -72,14 +75,16 @@ export default createStore({
 
       datos.name = (data.name != 'unknown') ? data.name : 'Sin datos'
       datos.img = `https://starwars-visualguide.com/assets/img/characters/${id}.jpg`
-      datos.eye_color = (data.eye_color != 'unknown') ? data.eye_color : 'Sin datos'
-      datos.height = (data.height != 'unknown') ? Intl.NumberFormat("es-CL").format(data.height) : 'Sin datos'
-      datos.mass = (data.mass != 'unknown') ? Intl.NumberFormat("es-CL").format(data.mass) : 'Sin datos'
-      datos.hair_color = (data.hair_color != 'unknown') ? data.hair_color : 'Sin datos'
-      datos.skin_color = (data.skin_color != 'unknown') ? data.skin_color : 'Sin datos'
-      datos.birth_year = (data.birth_year != 'unknown') ? data.birth_year : 'Sin datos'
-      datos.gender = (data.gender != 'unknown') ? data.gender : 'Sin datos'
-      datos.homeworld = (data.homeworld != 'unknown') ? data.homeworld : 'Sin datos'
+      datos.rows = []
+      datos.rows.push(
+        { 'Ojos': (data.eye_color != 'unknown') ? data.eye_color : 'Sin datos' },
+        { 'Altura': (data.height != 'unknown') ? Intl.NumberFormat("es-CL").format(data.height) : 'Sin datos' },
+        { 'masa': (data.mass != 'unknown') ? Intl.NumberFormat("es-CL").format(data.mass) : 'Sin datos' },
+        { 'Cabello': (data.hair_color != 'unknown') ? data.hair_color : 'Sin datos' },
+        { 'Piel': (data.skin_color != 'unknown') ? data.skin_color : 'Sin datos' },
+        { 'Cumpleaños': (data.birth_year != 'unknown') ? data.birth_year : 'Sin datos' },
+        { 'Genero': (data.gender != 'unknown') ? data.gender : 'Sin datos' },
+      )
 
       params = data.homeworld.split('/')
       id = params[params.length - 2]
@@ -241,11 +246,15 @@ export default createStore({
 
       datos.title = (data.title != 'unknown') ? data.title : 'Sin datos'
       datos.img = `https://starwars-visualguide.com/assets/img/films/${id}.jpg`
-      datos.episode_id = (data.episode_id != 'unknown') ? data.episode_id : 'Sin datos'
       datos.opening_crawl = (data.opening_crawl != 'unknown') ? data.opening_crawl : 'Sin datos'
-      datos.director = (data.director != 'unknown') ? data.director : 'Sin datos'
-      datos.producer = (data.producer != 'unknown') ? data.producer : 'Sin datos'
-      datos.release_date = (data.release_date != 'unknown') ? data.release_date : 'Sin datos'
+      datos.rows = []
+      
+      datos.rows.push(
+        { 'Episodio' : (data.episode_id != 'unknown') ? data.episode_id : 'Sin datos' },
+        { 'Director' : (data.director != 'unknown') ? data.director : 'Sin datos' },
+        { 'Productor' : (data.producer != 'unknown') ? data.producer : 'Sin datos' },
+        { 'Estreno' : (data.release_date != 'unknown') ? data.release_date : 'Sin datos' },
+      )
 
       const characters = []
 
@@ -392,18 +401,26 @@ export default createStore({
 
       let params = data.url.split('/')
       let id = params[params.length - 2]
-      datos.img = `https://starwars-visualguide.com/assets/img/species/${id}.jpg`
-
       datos.name = (data.name != 'unknown') ? data.name : 'Sin datos'
-      datos.classification = (data.classification != 'unknown') ? data.classification : 'Sin datos'
-      datos.designation = (data.designation != 'unknown') ? data.designation : 'Sin datos'
-      datos.average_height = (data.average_height != 'unknown') ? data.average_height : 'Sin datos'
-      datos.skin_colors = (data.skin_colors != 'unknown') ? data.skin_colors : 'Sin datos'
-      datos.hair_colors = (data.hair_colors != 'unknown') ? data.hair_colors : 'Sin datos'
-      datos.eye_colors = (data.eye_colors != 'unknown') ? data.eye_colors : 'Sin datos'
-      datos.average_lifespan = (data.average_lifespan != 'unknown') ? data.average_lifespan : 'Sin datos'
-      datos.homeworld = (data.homeworld != 'unknown') ? data.homeworld : 'Sin datos'
-      datos.language = (data.language != 'unknown') ? data.language : 'Sin datos'
+      datos.img = `https://starwars-visualguide.com/assets/img/species/${id}.jpg`
+      datos.rows = []
+
+      datos.rows.push(
+        { 'Clasificación' : (data.classification != 'unknown') ? data.classification : 'Sin datos' },
+        { 'Designación' : (data.designation != 'unknown') ? data.designation : 'Sin datos' },
+        { 'Altura media' : (data.average_height != 'unknown') ? data.average_height : 'Sin datos' },
+        { 'Piel' : (data.skin_colors != 'unknown') ? data.skin_colors : 'Sin datos' },
+        { 'Cabello' : (data.hair_colors != 'unknown') ? data.hair_colors : 'Sin datos' },
+        { 'Ojos' : (data.eye_colors != 'unknown') ? data.eye_colors : 'Sin datos' },
+        { 'Promedio de vida' : (data.average_lifespan != 'unknown') ? data.average_lifespan : 'Sin datos' },
+        { 'Idioma' : (data.language != 'unknown') ? data.language : 'Sin datos' },
+      )
+
+      if (data.homeworld) {
+        let paramsPlanet = data.homeworld.split('/')
+        let idPlanet = paramsPlanet[paramsPlanet.length - 2]
+        this.dispatch('getPlanetInto', idPlanet);
+      }
 
       const characters = []
 
@@ -457,7 +474,7 @@ export default createStore({
     },
 
     setVehicle (state, data) {
-      state.loadingResidents = true
+      state.loadingPilots = true
       state.loadingFilms = true
       state.residents = []
       state.films = []
@@ -470,41 +487,44 @@ export default createStore({
       datos.id = id
       datos.img = `https://starwars-visualguide.com/assets/img/vehicles/${id}.jpg`
       datos.name = (data.name != 'unknown') ? data.name : 'Sin datos'
-      datos.model = (data.model != 'unknown') ? data.model : 'Sin datos'
-      datos.manufacturer = (data.manufacturer != 'unknown') ? data.manufacturer : 'Sin datos'
-      datos.cost_in_credits = (data.cost_in_credits != 'unknown') ? Intl.NumberFormat("es-CL").format(data.cost_in_credits) : 'Sin datos'
-      datos.length = (data.length != 'unknown') ? data.length : 'Sin datos'
-      datos.max_atmosphering_speed = (data.max_atmosphering_speed != 'unknown') ? Intl.NumberFormat("es-CL").format(data.max_atmosphering_speed) : 'Sin datos'
-      datos.crew = (data.crew != 'unknown') ? Intl.NumberFormat("es-CL").format(data.crew) : 'Sin datos'
-      datos.passengers = (data.passengers != 'unknown') ? Intl.NumberFormat("es-CL").format(data.passengers) : 'Sin datos'
-      datos.cargo_capacity = (data.cargo_capacity != 'unknown') ? Intl.NumberFormat("es-CL").format(data.cargo_capacity) : 'Sin datos'
-      datos.consumables = (data.consumables != 'unknown') ? data.consumables : 'Sin datos'
-      datos.vehicle_class = (data.vehicle_class != 'unknown') ? data.vehicle_class : 'Sin datos'
-      datos.pilots = (data.pilots != 'unknown') ? data.pilots : 'Sin datos'
+      datos.rows = []
 
-      const residents = []
+      datos.rows.push(
+        { 'Modelo' : (data.model != 'unknown') ? data.model : 'Sin datos' },
+        { 'Fabricante' : (data.manufacturer != 'unknown') ? data.manufacturer : 'Sin datos' },
+        { 'Valor' : (data.cost_in_credits != 'unknown') ? Intl.NumberFormat("es-CL").format(data.cost_in_credits) : 'Sin datos' },
+        { 'Largo' : (data.length != 'unknown') ? data.length : 'Sin datos' },
+        { 'Velocidad atmosférica máxima' : (data.max_atmosphering_speed != 'unknown') ? Intl.NumberFormat("es-CL").format(data.max_atmosphering_speed) : 'Sin datos' },
+        { 'Personal' : (data.crew != 'unknown') ? Intl.NumberFormat("es-CL").format(data.crew) : 'Sin datos' },
+        { 'Pasajeros' : (data.passengers != 'unknown') ? Intl.NumberFormat("es-CL").format(data.passengers) : 'Sin datos' },
+        { 'Capacidad de carga' : (data.cargo_capacity != 'unknown') ? Intl.NumberFormat("es-CL").format(data.cargo_capacity) : 'Sin datos' },
+        { 'Combustible' : (data.consumables != 'unknown') ? data.consumables : 'Sin datos' },
+        { 'Clase' : (data.vehicle_class != 'unknown') ? data.vehicle_class : 'Sin datos' },
+      )
+
+      const pilots = []
 
       data.pilots.forEach(function (item, index) {
         params = item.split('/')
         id = params[params.length - 2]
-        residents.push(id)
+        pilots.push(id)
       })
 
-      const sendResident = resident =>
+      const sendPilots = pilot =>
         new Promise(resolve =>
-          resolve(this.dispatch('getResidents', resident))
+          resolve(this.dispatch('getPilots', pilot))
         );
       
-      let resident = '';
+      let pilot = '';
 
-      const sendAllResidents = async () => {
-        for (resident of residents) {
-          const residentmInfo = await sendResident(resident)
+      const sendAllPilots = async () => {
+        for (pilot of pilots) {
+          const pilotInfo = await sendPilots(pilot)
         }
-        state.loadingResidents = false
+        state.loadingPilots = false
       };
 
-      sendAllResidents()
+      sendAllPilots()
 
       const films = []
 
@@ -587,6 +607,7 @@ export default createStore({
         datos.rows.push({
           id: id,
           name: item.name,
+          type: 'Planet',
           img: `https://starwars-visualguide.com/assets/img/planets/${id}.jpg`,
         })
       })
@@ -617,14 +638,18 @@ export default createStore({
       datos.id = id
       datos.name = (data.name != 'unknown') ? data.name : 'Sin datos'
       datos.img = `https://starwars-visualguide.com/assets/img/planets/${id}.jpg`
-      datos.rotation_period = (data.rotation_period != 'unknown') ? Intl.NumberFormat("es-CL").format(data.rotation_period) : 'Sin datos'
-      datos.orbital_period = (data.orbital_period != 'unknown') ? Intl.NumberFormat("es-CL").format(data.orbital_period) : 'Sin datos'
-      datos.diameter = (data.diameter != 'unknown') ? Intl.NumberFormat("es-CL").format(data.diameter) : 'Sin datos'
-      datos.climate = (data.climate != 'unknown') ? data.climate : 'Sin datos'
-      datos.gravity = (data.gravity != 'unknown') ? data.gravity : 'Sin datos'
-      datos.terrain = (data.terrain != 'unknown') ? data.terrain : 'Sin datos'
-      datos.surface_water = (data.surface_water != 'unknown') ? Intl.NumberFormat("es-CL").format(data.surface_water) : 'Sin datos'
-      datos.population = (data.population != 'unknown') ? Intl.NumberFormat("es-CL").format(data.population) : 'Sin datos'
+
+      datos.rows = []
+      datos.rows.push(
+        { 'Rotació' : (data.rotation_period != 'unknown') ? Intl.NumberFormat("es-CL").format(data.rotation_period) : 'Sin datos' },
+        { 'Orbita' : (data.orbital_period != 'unknown') ? Intl.NumberFormat("es-CL").format(data.orbital_period) : 'Sin datos' },
+        { 'Diametros' : (data.diameter != 'unknown') ? Intl.NumberFormat("es-CL").format(data.diameter) : 'Sin datos' },
+        { 'Clima' : (data.climate != 'unknown') ? data.climate : 'Sin datos' },
+        { 'Gravedad' : (data.gravity != 'unknown') ? data.gravity : 'Sin datos' },
+        { 'Terreno' : (data.terrain != 'unknown') ? data.terrain : 'Sin datos' },
+        { 'Superficie de agua' : (data.surface_water != 'unknown') ? Intl.NumberFormat("es-CL").format(data.surface_water) : 'Sin datos' },
+        { 'Población' : (data.population != 'unknown') ? Intl.NumberFormat("es-CL").format(data.population) : 'Sin datos' },
+      )
 
       const residents = []
 
@@ -705,6 +730,7 @@ export default createStore({
         datos.rows.push({
           id: id,
           name: item.name,
+          type: 'Ship',
           img: `https://starwars-visualguide.com/assets/img/starships/${id}.jpg`
         })
       })
@@ -724,7 +750,7 @@ export default createStore({
       state.films = []
       state.pilots = []
       state.loadingFilms = true 
-      state.loadingResidents = true
+      state.loadingPilots = true
       const datos = {}
 
       let params = data.url.split('/')
@@ -732,19 +758,22 @@ export default createStore({
 
       datos.name = (data.name != 'unknown') ? data.name : 'Sin datos'
       datos.img = `https://starwars-visualguide.com/assets/img/starships/${id}.jpg`
-      datos.model = (data.model != 'unknown') ? data.model : 'Sin datos'
-      datos.manufacturer = (data.manufacturer != 'unknown') ? data.manufacturer : 'Sin datos'
-      datos.cost_in_credits = (data.cost_in_credits != 'unknown') ? Intl.NumberFormat("es-CL").format(data.cost_in_credits) : 'Sin datos'
-      datos.length = (data.length != 'unknown') ? Intl.NumberFormat("es-CL").format(data.length) : 'Sin datos'
-      datos.max_atmosphering_speed = (data.max_atmosphering_speed != 'unknown') ? Intl.NumberFormat("es-CL").format(data.max_atmosphering_speed) : 'Sin datos'
-      datos.crew = (data.crew != 'unknown') ? Intl.NumberFormat("es-CL").format(data.crew) : 'Sin datos'
-      datos.passengers = (data.passengers != 'unknown') ? Intl.NumberFormat("es-CL").format(data.passengers) : 'Sin datos'
-      datos.cargo_capacity = (data.cargo_capacity != 'unknown') ? Intl.NumberFormat("es-CL").format(data.cargo_capacity) : 'Sin datos'
-      datos.consumables = (data.consumables != 'unknown') ? data.consumables : 'Sin datos'
-      datos.hyperdrive_rating = (data.hyperdrive_rating != 'unknown') ? data.hyperdrive_rating : 'Sin datos'
-      datos.MGLT = (data.MGLT != 'unknown') ? Intl.NumberFormat("es-CL").format(data.MGLT) : 'Sin datos'
-      datos.starship_class = (data.starship_class != 'unknown') ? data.starship_class : 'Sin datos'
-      datos.pilots = (data.pilots != 'unknown') ? data.pilots : 'Sin datos'
+      datos.rows = []
+
+      datos.rows.push(
+        { 'Modelo' : (data.model != 'unknown') ? data.model : 'Sin datos' },
+        { 'Fabricante' : (data.manufacturer != 'unknown') ? data.manufacturer : 'Sin datos' },
+        { 'Valor' : (data.cost_in_credits != 'unknown') ? Intl.NumberFormat("es-CL").format(data.cost_in_credits) : 'Sin datos' },
+        { 'Largo' : (data.length != 'unknown') ? Intl.NumberFormat("es-CL").format(data.length) : 'Sin datos' },
+        { 'Velocidad atmosférica máxima' : (data.max_atmosphering_speed != 'unknown') ? Intl.NumberFormat("es-CL").format(data.max_atmosphering_speed) : 'Sin datos' },
+        { 'Personal' : (data.crew != 'unknown') ? Intl.NumberFormat("es-CL").format(data.crew) : 'Sin datos' },
+        { 'Tripulación' : (data.passengers != 'unknown') ? Intl.NumberFormat("es-CL").format(data.passengers) : 'Sin datos' },
+        { 'Capacidad de carga' : (data.cargo_capacity != 'unknown') ? Intl.NumberFormat("es-CL").format(data.cargo_capacity) : 'Sin datos' },
+        { 'Consumibles' : (data.consumables != 'unknown') ? data.consumables : 'Sin datos' },
+        { 'Calificación hiperimpulsor' : (data.hyperdrive_rating != 'unknown') ? data.hyperdrive_rating : 'Sin datos' },
+        { 'MGLT' : (data.MGLT != 'unknown') ? Intl.NumberFormat("es-CL").format(data.MGLT) : 'Sin datos' },
+        { 'Clase' : (data.starship_class != 'unknown') ? data.starship_class : 'Sin datos' },
+      )
 
       const films = []
 
@@ -789,7 +818,7 @@ export default createStore({
         for (pilot of pilots) {
           const pilotInfo = await sendPilots(pilot)
         }
-        state.loadingResidents = false
+        state.loadingPilots = false
       };
 
       sendAllPilots()
@@ -1064,6 +1093,10 @@ export default createStore({
 
     loadingSpecies: (state) => {
       return state.loadingSpecies
+    },
+
+    loadingPilots: (state) => {
+      return state.loadingPilots
     },
 
   }

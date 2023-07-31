@@ -12,17 +12,17 @@ import Pagination from '../components/Pagination.vue'
       <div class="container">
         <Nav/>
         <Search
-          :placeTxt="'Buscar Planetas ..'"
+          :placeTxt="'Buscar personajes ..'"
           @search="buscar"
         />
         <List
-          :results="planets.rows"
+          :results="peoples.rows"
           :loading="loading"
         />
         <Pagination
           :loading="loading"
-          :next="planets.next"
-          :prev="planets.prev"
+          :next="peoples.next"
+          :prev="peoples.prev"
           @nextPage="next"
           @prevPage="prev"
         />
@@ -33,7 +33,7 @@ import Pagination from '../components/Pagination.vue'
 
 <script>
 import { mapGetters, mapActions } from "vuex";
-  
+
 export default {
   data() {
     return {
@@ -42,21 +42,21 @@ export default {
   },
   computed: {
     ...mapGetters({
-        planets: 'getPlanets',
+        peoples: 'getPeoples',
         loading: 'loading'
     })
   },
   mounted () {
-    this.getsAllPlanets();
+    this.getsAllPeople();
   },
   methods: {
-    ...mapActions(["getAllPlanets"]),
+    ...mapActions(["getAllPeople"]),
 
-    async getsAllPlanets() {
+    async getsAllPeople() {
       let params = {
         search: ''
       }
-      this.getAllPlanets(params)
+      this.getAllPeople(params)
     },
 
     buscar (n) {
@@ -64,7 +64,7 @@ export default {
       let params = {
         search: this.search
       }
-      this.getAllPlanets(params)
+      this.getAllPeople(params)
     },
 
     prev (n) {
@@ -73,7 +73,7 @@ export default {
           search: this.search,
           page: n
         }
-        this.getAllPlanets(params)
+        this.getAllPeople(params)
       }
     },
 
@@ -83,7 +83,7 @@ export default {
           search: this.search,
           page: n
         }
-        this.getAllPlanets(params)
+        this.getAllPeople(params)
       }
     },
   }

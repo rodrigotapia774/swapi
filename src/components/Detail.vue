@@ -1,3 +1,10 @@
+<script setup>
+import Info from './Information.vue'
+import InfoLink from './InformationLink.vue'
+import Resumen from './Resumen.vue'
+import Attributes from './Attributes.vue'
+</script>
+
 <template>
   <div>
     <div
@@ -9,180 +16,88 @@
       class="row"
     >
       <div class="col-60">
-        <h1>{{ people.name }}</h1>
+        <h1>{{ datos.name }}</h1>
         <div class="contenedor">
           <div class="list-attr">
-            <div class="box-content">
-              <h4>Color de ojos</h4>
-              <p>{{ people.eye_color }}</p>
-            </div>
-            <div class="box-content">
-              <h4>Altura</h4> 
-              <p>{{ people.height }}</p>
-            </div>
-            <div class="box-content">
-              <h4>Masa</h4> 
-              <p>{{ people.mass }}</p>
-            </div>
-            <div class="box-content">
-              <h4>Color cabello</h4>
-              <p>{{ people.hair_color }}</p>
-            </div>
-            <div class="box-content">
-              <h4>Color de piel</h4>
-              <p>{{ people.skin_color }}</p>
-            </div>
-            <div class="box-content">
-              <h4>Cumpleaños</h4>
-              <p>{{ people.birth_year }}</p>
-            </div>
-            <div class="box-content">
-              <h4>Genero</h4>
-              <p>{{ people.gender }}</p>
-            </div>
-            <div class="box-content">
-              <h4>Planeta</h4>
-              <span
-                v-if="loadingPlanet"
-                class="bar-loader"
-              ></span>
-              <router-link
-                v-else
-                :to="{
-                  name: 'Planet',
-                  params: { id: planet.id },
-                }"
-              >
-                {{ planet.name }}
-              </router-link>
-            </div>
-          </div>
-        </div>
-        <h2 class="title-content">Peliculas</h2>
-        <div class="contenedor">
-          <div
-            v-if="loadingFilms"
-            class="subspinner"
-          ></div>
-          <ul
-            v-else
-            class="list-fimls"
-          >
-            <li
-              v-for="(data, key) in films"
+            <div
+              v-for="(data, key) in datos.rows"
               :key="key"
             >
-              <router-link
-                :to="{
-                  name: 'Film',
-                  params: { id: data.id },
-                }"
-              >
-                <div class="content-film">
-                  <img
-                    :src="data.img"
-                    @error="imageNotFounf"
-                  />
-                </div>
-              </router-link>
-            </li>
-          </ul>
+              <Info
+                :datos="data"
+              />
+            </div>
+            <InfoLink
+              v-if="planet"
+              :title="'Planeta'"
+              :loading="loadingPlanet"
+              :datos="planet"
+              :type="'Planet'"
+            />
+          </div>
         </div>
-        <h2 class="title-content">Naves</h2>
-        <div class="contenedor">
-          <div
-            v-if="loadingStarship"
-            class="subspinner"
-          ></div>
-          <ul
-            v-else
-            class="list-fimls"
-          >
-            <li
-              v-for="(data, key) in starships"
-              :key="'ship'+key"
-            >
-              <router-link
-                :to="{
-                  name: 'Ship',
-                  params: { id: data.id },
-                }"
-              >
-                <div class="content-film">
-                  <img
-                    :src="data.img"
-                    @error="imageNotFounf"
-                  />
-                </div>
-              </router-link>
-            </li>
-          </ul>
+        <div
+          v-if="datos.opening_crawl"
+          class="contenedor">
+          <Resumen
+            :title="'Resumen'"
+            :data="datos.opening_crawl"
+          />
         </div>
-        <h2 class="title-content">Vehículos</h2>
-        <div class="contenedor">
-          <div
-            v-if="loadingVehicle"
-            class="subspinner"
-          ></div>
-          <ul
-            v-else
-            class="list-fimls"
-          >
-            <li
-              v-for="(data, key) in vehicles"
-              :key="'vehicle'+key"
-            >
-              <router-link
-                :to="{
-                  name: 'Vehicle',
-                  params: { id: data.id },
-                }"
-              >
-                <div class="content-film">
-                  <img
-                    :src="data.img"
-                    @error="imageNotFounf"
-                  />
-                </div>
-              </router-link>
-            </li>
-          </ul>
-        </div>
-        <h2 class="title-content">Especies</h2>
-        <div class="contenedor">
-          <div
-            v-if="loadingSpecies"
-            class="subspinner"
-          ></div>
-          <ul
-            v-else
-            class="list-fimls"
-          >
-            <li
-              v-for="(data, key) in species"
-              :key="'specie'+key"
-            >
-              <router-link
-                :to="{
-                  name: 'Specie',
-                  params: { id: data.id },
-                }"
-              >
-                <div class="content-film">
-                  <img
-                    :src="data.img"
-                    @error="imageNotFounf"
-                  />
-                </div>
-              </router-link>
-            </li>
-          </ul>
-        </div>
+        <Attributes
+          v-if="components.includes('films')"
+          :title="'Peliculas'"
+          :type="'Film'"
+          :loading="loadingFilms"
+          :datos="films"
+        />
+        <Attributes
+          v-if="components.includes('planets')"
+          :title="'Planetas'"
+          :type="'Planet'"
+          :loading="loadingPlanet"
+          :datos="planets"
+        />
+        <Attributes
+          v-if="components.includes('starships')"
+          :title="'Naves'"
+          :type="'Ship'"
+          :loading="loadingStarship"
+          :datos="starships"
+        />
+        <Attributes
+          v-if="components.includes('vehicles')"
+          :title="'Vehículos'"
+          :type="'Vehicle'"
+          :loading="loadingVehicle"
+          :datos="vehicles"
+        />
+        <Attributes
+          v-if="components.includes('residents')"
+          :title="'Residentes'"
+          :type="'People'"
+          :loading="loadingResidents"
+          :datos="residents"
+        />
+        <Attributes
+           v-if="components.includes('species')"
+          :title="'Especies'"
+          :type="'Specie'"
+          :loading="loadingSpecies"
+          :datos="species"
+        />
+        <Attributes
+          v-if="components.includes('pilots')"
+          :title="'Pilotos'"
+          :type="'People'"
+          :loading="loadingPilots"
+          :datos="pilots"
+        />
       </div>
       <div class="col-40">
         <div class="profile-image">
           <img
-            :src="people.img"
+            :src="datos.img"
             @error="imageNotFounf"
           />
         </div>
@@ -192,45 +107,122 @@
 </template>
 
 <script>
-import { useRoute } from "vue-router";
-import { mapGetters, mapActions } from "vuex";
 import imgNot from '@/assets/img/notfound.png';
 
 export default {
-  data() {
-    return {
-    }
-  },
-  computed: {
-    ...mapGetters({
-        people: 'getPeople',
-        loading: 'loading',
-        planet: 'getPlanet',
-        films: 'getFilms',
-        vehicles: 'getVehicles',
-        starships: 'getShips',
-        species: 'getSpecies',
-        loadingFilms: 'loadingFilms',
-        loadingPlanet: 'loadingPlanet',
-        loadingVehicle: 'loadingVehicle',
-        loadingStarship: 'loadingStarship',
-        loadingSpecies: 'loadingSpecies',
-    })
-  },
-  mounted () {
-    this.getsPeople();
+  props: {
+    datos: {
+      type: Object,
+      default: {}
+    },
+    planet: {
+      type: [Object, Boolean],
+      default: false
+    },
+    components: {
+      type: Array,
+      default: []
+    },
+    films: {
+      type: Array,
+      default: Array
+    },
+    planets: {
+      type: Array,
+      default: Array
+    },
+    vehicles: {
+      type: Object,
+      default: Array
+    },
+    starships: {
+      type: Object,
+      default: Array
+    },
+    species: {
+      type: Object,
+      default: Array
+    },
+    residents: {
+      type: Object,
+      default: Array
+    },
+    pilots: {
+      type: Object,
+      default: Array
+    },
+    loading: {
+      type: Boolean,
+      default: false
+    },
+    loadingFilms: {
+      type: Boolean,
+      default: false
+    },
+    loadingPlanet: {
+      type: Boolean,
+      default: false
+    },
+    loadingVehicle: {
+      type: Boolean,
+      default: false
+    },
+    loadingStarship: {
+      type: Boolean,
+      default: false
+    },
+    loadingSpecies: {
+      type: Boolean,
+      default: false
+    },
+    loadingPilots: {
+      type: Boolean,
+      default: false
+    },
+    loadingResidents: {
+      type: Boolean,
+      default: false
+    },
   },
   methods: {
-    ...mapActions(["getPeople"]),
-
-    async getsPeople() {
-      const route = useRoute();
-      const id = route.params.id;
-      this.getPeople(id)
-    },
     imageNotFounf (event) {
       event.target.src = imgNot
     },
-  },
+  }
 }
 </script>
+
+<style scoped>
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+.col-60 {
+  width: 60%;
+}
+.col-40 {
+  width: 40%;
+}
+.list-attr {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: start;
+}
+.profile-image {
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  border-radius: 0.2rem;
+}
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column-reverse;
+  }
+  .col-60 {
+    width: 100%;
+  }
+  .col-40 {
+    width: 100%;
+  }
+}
+</style>
